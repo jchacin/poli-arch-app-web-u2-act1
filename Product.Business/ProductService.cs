@@ -1,7 +1,8 @@
-﻿using ProductAPI.Business.Interfaces;
+﻿using ProductAPI.Models; // O el namespace donde esté tu clase 'Product'
+using ProductAPI.Repositories.Interfaces; // Para IProductRepository
+using ProductAPI.Business.Interfaces;
 using ProductAPI.Business.Utils;
-using ProductAPI.Models;
-using ProductAPI.Repositories.Interfaces;
+
 using System;
 using System.Collections.Generic;
 using System.Text;

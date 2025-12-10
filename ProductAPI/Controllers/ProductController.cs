@@ -1,9 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using ProductAPI.Business.Interfaces;
-using ProductAPI.Models;
+using ProductAPI.Models; // Aquí debe estar tu clase ProductModel
+using System.Collections.Generic;
 using System.Threading.Tasks;
-
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace ProductAPI.Controllers
 {
@@ -18,46 +17,72 @@ namespace ProductAPI.Controllers
             _productService = productService;
         }
 
-        // GET: api/<ProductController>
+        // GET: api/product
         [HttpGet]
-        public async Task<IEnumerable<ProductModel>> Get()
+        public async Task<ActionResult<IEnumerable<ProductModel>>> GetAll()
         {
-            return await _productService.GetAllProducts();
+            // Coincide con GetAllProducts() de tu interfaz
+            var products = await _productService.GetAllProducts();
+            return Ok(products);
         }
 
-        // GET api/<ProductController>/5
+        // GET: api/product/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<ProductModel>> Get(int id)
+        public async Task<ActionResult<ProductModel>> GetById(int id)
         {
+            // Coincide con GetProductById(id) de tu interfaz
             var product = await _productService.GetProductById(id);
-            if (product != null) return Ok(product);
-            return NotFound();
+
+            if (product == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(product);
         }
 
-        // POST api/<ProductController>
+        // POST: api/product
         [HttpPost]
-        public async Task<ActionResult> Post([FromBody] ProductModel model)
+        public async Task<ActionResult<ProductModel>> Create(ProductModel product)
         {
-            var newProduct = await _productService.CreateProduct(model);
-            return CreatedAtAction(nameof(Get), new { id = newProduct.Id }, newProduct);
+            // Coincide con CreateProduct(product) de tu interfaz
+            var createdProduct = await _productService.CreateProduct(product);
+
+            // Retorna 201 Created y la ubicación del nuevo recurso
+            return CreatedAtAction(nameof(GetById), new { id = createdProduct.Id }, createdProduct);
         }
 
-        // PUT api/<ProductController>/5
+        // PUT: api/product/5 (Opcional: Agregado porque lo vi en tu interfaz)
         [HttpPut("{id}")]
-        public async Task<ActionResult> Put(int id, [FromBody] ProductModel model)
+        public async Task<ActionResult<ProductModel>> Update(int id, ProductModel product)
         {
-            var updatedProduct = await _productService.UpdateProduct(id, model);
-            if (updatedProduct != null) return Ok();
-            return NotFound();
+            if (id != product.Id)
+            {
+                return BadRequest("El ID de la URL no coincide con el del cuerpo.");
+            }
+
+            var updatedProduct = await _productService.UpdateProduct(id, product);
+
+            if (updatedProduct == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(updatedProduct);
         }
 
-        // DELETE api/<ProductController>/5
+        // DELETE: api/product/5 (Opcional: Agregado porque lo vi en tu interfaz)
         [HttpDelete("{id}")]
-        public async Task<ActionResult> Delete(int id)
+        public async Task<IActionResult> Delete(int id)
         {
-            var deleted = await _productService.DeleteProduct(id);
-            if (deleted) return Ok();
-            return NotFound();
+            var result = await _productService.DeleteProduct(id);
+
+            if (!result)
+            {
+                return NotFound();
+            }
+
+            return NoContent();
         }
     }
 }
