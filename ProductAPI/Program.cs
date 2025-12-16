@@ -21,7 +21,7 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
-    // OpenApiInfo requiere 'using Microsoft.OpenApi.Models;'
+    
     c.SwaggerDoc("v1", new OpenApiInfo
     {
         Title = "ProductAPI",
@@ -41,10 +41,10 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 
 var app = builder.Build();
 
-// Middleware de manejo de errores (según tu código original)
+
 app.UseErrorHandler();
 
-// Configure the HTTP request pipeline.
+
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
