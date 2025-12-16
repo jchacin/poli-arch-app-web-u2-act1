@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using Microsoft.EntityFrameworkCore; 
+using ProductAPI.Repositories.Data;  
 
 namespace ProductAPI.Repositories.Entities
 {
@@ -12,5 +14,6 @@ namespace ProductAPI.Repositories.Entities
         public decimal? Price { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
+
     }
 }

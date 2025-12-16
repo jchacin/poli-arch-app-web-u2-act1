@@ -1,36 +1,74 @@
-﻿using ProductAPI.Repositories.Entities;
+﻿using Microsoft.EntityFrameworkCore;
+using ProductAPI.Repositories.Data;
+using ProductAPI.Repositories.Entities;
 using ProductAPI.Repositories.Interfaces;
 using System;
 using System.Collections.Generic;
-using System.Text;
+using System.Threading.Tasks;
 
 namespace ProductAPI.Repositories
 {
     public class ProductRepository : IProductRepository
     {
-        public Task<Product> CreateProduct(Product product)
+        private readonly ApplicationDbContext _context;
+
+        public ProductRepository(ApplicationDbContext context)
         {
-            throw new NotImplementedException();
+            _context = context;
         }
 
-        public Task<bool> DeleteProduct(int id)
+        // Obtener todos
+        public async Task<IEnumerable<Product>> GetAllProducts()
         {
-            throw new NotImplementedException();
+            return await _context.Products.ToListAsync();
         }
 
-        public Task<IEnumerable<Product>> GetAllProducts()
+        // Obtener por ID
+        public async Task<Product?> GetProductById(int id)
         {
-            throw new NotImplementedException();
+            return await _context.Products.FindAsync(id);
         }
 
-        public Task<Product?> GetProductById(int id)
+        // Crear
+        public async Task<Product> CreateProduct(Product product)
         {
-            throw new NotImplementedException();
+            product.CreatedAt = DateTime.Now;
+            product.UpdatedAt = DateTime.Now;
+
+            await _context.Products.AddAsync(product);
+            await _context.SaveChangesAsync();
+            return product;
         }
 
-        public Task<Product?> UpdateProduct(int id, Product product)
+        // Actualizar
+        public async Task<Product?> UpdateProduct(int id, Product product)
         {
-            throw new NotImplementedException();
+            var existingProduct = await _context.Products.FindAsync(id);
+
+            if (existingProduct == null) return null;
+
+            // Actualizamos los campos
+            existingProduct.Name = product.Name;
+            existingProduct.Description = product.Description;
+            existingProduct.Price = product.Price;
+            existingProduct.UpdatedAt = DateTime.Now;
+
+            // No es necesario llamar a Update, EF detecta cambios en objetos rastreados
+            // pero SaveChangesAsync es obligatorio.
+            await _context.SaveChangesAsync();
+
+            return existingProduct;
+        }
+
+        // Eliminar
+        public async Task<bool> DeleteProduct(int id)
+        {
+            var product = await _context.Products.FindAsync(id);
+            if (product == null) return false;
+
+            _context.Products.Remove(product);
+            await _context.SaveChangesAsync();
+            return true;
         }
     }
 }
