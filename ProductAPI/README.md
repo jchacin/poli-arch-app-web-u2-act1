@@ -21,5 +21,3 @@ dotnet ef migrations add InitialCreate --project Product.Repositories --startup-
 
 1. 6. Ejecucion
 https://localhost:44345/swagger/index.html
-
-Nuevo cambio.
