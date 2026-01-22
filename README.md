@@ -1,6 +1,6 @@
 # Maestría en Arquitectura de Software
 
-Arquitectura de Aplicaciones Web - Unidad 2 - Actividad de entrega 1
+Arquitectura de Aplicaciones Web - Unidad 4 - Actividad de entrega 2
 
 ### Integrantes del grupo:
 

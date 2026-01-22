@@ -13,11 +13,13 @@ A continuación se detallan los pasos para configurar la base de datos desde cero
    ```bash
    dotnet tool install --global dotnet-ef
 
-4. crea la Base da datos
-dotnet ef database update --project Product.Repositories --startup-project ProductAPI
+4. Crea la Base da datos
+	```bash
+	dotnet ef database update --project Product.Repositories --startup-project ProductAPI
 
 5. Crear la migración inicial
-dotnet ef migrations add InitialCreate --project Product.Repositories --startup-project ProductAPI
+	```bash
+	dotnet ef migrations add InitialCreate --project Product.Repositories --startup-project ProductAPI
 
-1. 6. Ejecucion
+6. Ejecucion: 
 https://localhost:44345/swagger/index.html
