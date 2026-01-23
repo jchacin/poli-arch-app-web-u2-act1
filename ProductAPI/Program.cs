@@ -1,34 +1,27 @@
-using Microsoft.AspNetCore.Builder;
-using Microsoft.EntityFrameworkCore; 
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-using Microsoft.OpenApi;
-using Microsoft.OpenApi.Models; 
+using Microsoft.EntityFrameworkCore;
+using ProductAPI;
 using ProductAPI.Business;
 using ProductAPI.Business.Interfaces;
 using ProductAPI.Middlewares;
 using ProductAPI.Repositories;
 using ProductAPI.Repositories.Data; 
 using ProductAPI.Repositories.Interfaces;
+using Microsoft.AspNetCore.Server.Kestrel.Core;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// 1. Agregar servicios al contenedor.
-
-builder.Services.AddControllers();
-
-// Swagger / OpenAPI
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen(c =>
+// Forzar Kestrel a escuchar en 5243 con HTTP/2 (h2) - necesario para gRPC
+builder.WebHost.ConfigureKestrel(options =>
 {
-    
-    c.SwaggerDoc("v1", new OpenApiInfo
+    options.ListenLocalhost(5243, listenOptions =>
     {
-        Title = "ProductAPI",
-        Version = "v1",
-        Description = "API para gestionar productos"
+        listenOptions.Protocols = HttpProtocols.Http2; // o HttpProtocols.Http1AndHttp2 si necesitas ambos
     });
 });
+
+// 1. Agregar servicios al contenedor.
+builder.Services.AddGrpc();
+builder.Services.AddGrpcReflection();
 
 // Inyección de dependencias de tus Servicios y Repositorios
 builder.Services.AddTransient<IProductService, ProductService>();
@@ -41,24 +34,14 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 
 var app = builder.Build();
 
-
 app.UseErrorHandler();
 
 
 if (app.Environment.IsDevelopment())
 {
-    app.UseSwagger();
-    app.UseSwaggerUI(c =>
-    {
-        c.SwaggerEndpoint("/swagger/v1/swagger.json", "ProductAPI v1");
-        c.RoutePrefix = "swagger";
-    });
+    app.MapGrpcReflectionService();
 }
 
-app.UseHttpsRedirection();
-
-app.UseAuthorization();
-
-app.MapControllers();
+app.MapGrpcService<ProductGrpcService>();
 
 app.Run();
