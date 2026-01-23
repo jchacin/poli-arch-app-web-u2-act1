@@ -12,14 +12,13 @@ A continuación se detallan los pasos para configurar la base de datos desde cero
 3. Tener instalada la herramienta global de EF Core. Si no la tienes, ejecuta:
    ```bash
    dotnet tool install --global dotnet-ef
-
-4. Crea la Base da datos
+4. Verificar que las credenciales de la instancia de SQL Server en el archivo `appsettings.json` sean correctas.
+5. Crea la Base de datos
 	```bash
 	dotnet ef database update --project Product.Repositories --startup-project ProductAPI
-
-5. Crear la migración inicial
+6. Crear la migración inicial
 	```bash
 	dotnet ef migrations add InitialCreate --project Product.Repositories --startup-project ProductAPI
-
-6. Ejecucion: 
-https://localhost:44345/swagger/index.html
+7. Utiliza este comando para correr el proyecto y poder probar el servicio de gRPC
+	```bash
+	dotnet run --project ProductAPI
