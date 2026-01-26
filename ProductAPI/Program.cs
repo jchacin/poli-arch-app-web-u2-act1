@@ -17,6 +17,12 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 
+// --- CONFIGURACIÓN DE GRAPHQL ---
+builder.Services
+    .AddGraphQLServer()
+    .AddQueryType<ProductAPI.GraphQL.Query>()
+    .AddMutationType<ProductAPI.GraphQL.Mutation>();
+
 // Swagger / OpenAPI
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
@@ -59,6 +65,7 @@ app.UseHttpsRedirection();
 
 app.UseAuthorization();
 
-app.MapControllers();
 
+app.MapControllers();
+app.MapGraphQL();
 app.Run();
